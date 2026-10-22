@@ -1,0 +1,11 @@
+language: zh-TW
+# 加入、離開訊息裡的伺服器名稱。
+server-name: "幻月服"
+# 是否轉發到 Discord（需要 tokaDiscordLink；沒有它就什麼都不會發生）。
+discord:
+  chat: true
+  presence: true
+  deaths: true
+# 玩家離開是「轉移到另一台伺服器」時，把位址換成好讀的名稱。位址是遊戲核心給的原文，例如：
+#   "1.2.3.4:19132": "閃電服"
+transfers: {}

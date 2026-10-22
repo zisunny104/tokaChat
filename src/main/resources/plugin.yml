@@ -1,0 +1,10 @@
+name: tokaChat
+main: dev.toka.chat.Main
+version: "0.1.0"
+api: ["1.0.4"]
+load: POSTWORLD
+softdepend: [tokaDisplay, tokaRegions, tokaDiscordLink]
+permissions:
+  tokachat.speak:
+    description: 可以在聊天中發言
+    default: true
