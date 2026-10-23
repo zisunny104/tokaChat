@@ -40,6 +40,45 @@ public final class Main extends PluginBase implements Listener {
         var section = config.getSection("transfers");
         for (String address : section.getKeys(false)) transfers.put(address, section.getString(address));
         getServer().getPluginManager().registerEvents(this, this);
+        instance = this;
+        listenDiscord();
+    }
+
+    private boolean listeningDiscord;
+    private static volatile Main instance;
+
+    /** Whether what Discord users write is shown in the game from here. For zero's hand-over check, by reflection. */
+    public static boolean listensDiscord() {
+        Main main = instance;
+        return main != null && main.listeningDiscord;
+    }
+
+    /** What a linked Discord user writes in the chat channel is shown in the game, and repeated in the channel in the game's style. */
+    private void listenDiscord() {
+        if (listeningDiscord || !getConfig().getBoolean("discord.inbound", true)) return;
+        listeningDiscord = links.listenDiscord(getName(), payload -> getServer().getScheduler().scheduleTask(this, () -> fromDiscord(payload)));
+    }
+
+    private void fromDiscord(String[] payload) {
+        if (payload == null || payload.length < 3 || payload[0].isBlank()) return;
+        java.util.UUID id;
+        try { id = java.util.UUID.fromString(payload[0]); } catch (IllegalArgumentException notAPlayer) { return; }
+        Player online = getServer().getOnlinePlayers().get(id);
+        String name = online != null ? online.getName() : getServer().getOfflinePlayer(id).getName();
+        if (name == null) return;
+        String line = text("discord.inbound", links.nameTag(id, name, online), payload[1]);
+        getServer().broadcastMessage(line);
+        relay(true, line);
+        links.deleteDiscord(payload[2]);
+    }
+
+    @EventHandler public void onPluginEnabled(cn.nukkit.event.plugin.PluginEnableEvent event) {
+        if (event.getPlugin().getName().equals("tokaDiscordLink")) { listeningDiscord = false; getServer().getScheduler().scheduleTask(this, this::listenDiscord); }
+    }
+
+    @Override public void onDisable() {
+        instance = null;
+        links.stopListeningDiscord(getName());
     }
 
     private String text(String key, Object... args) { return messages.text(key, args); }

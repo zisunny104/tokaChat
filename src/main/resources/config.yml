@@ -6,6 +6,8 @@ discord:
   chat: true
   presence: true
   deaths: true
+  # 已綁定的 Discord 使用者在聊天頻道的發言，顯示到遊戲裡。
+  inbound: true
 # 玩家離開是「轉移到另一台伺服器」時，把位址換成好讀的名稱。位址是遊戲核心給的原文，例如：
 #   "1.2.3.4:19132": "閃電服"
 transfers: {}

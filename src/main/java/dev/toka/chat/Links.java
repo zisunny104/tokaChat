@@ -40,6 +40,25 @@ final class Links {
         catch (ReflectiveOperationException | LinkageError failed) { return null; }
     }
 
+    /** Listens for what linked Discord users write in the chat channel; the handler gets {player UUID, message, message id}. False when Discord is not there. */
+    boolean listenDiscord(String owner, java.util.function.Consumer<String[]> handler) {
+        Method register = method("tokaDiscordLink", "dev.toka.discord.api.DiscordLink", "registerInboundHandler", String.class, java.util.function.Consumer.class);
+        if (register == null) return false;
+        try { register.invoke(null, owner, handler); return true; } catch (ReflectiveOperationException | LinkageError failed) { return false; }
+    }
+
+    void stopListeningDiscord(String owner) {
+        Method unregister = method("tokaDiscordLink", "dev.toka.discord.api.DiscordLink", "unregisterInboundHandler", String.class);
+        if (unregister == null) return;
+        try { unregister.invoke(null, owner); } catch (ReflectiveOperationException | LinkageError ignored) { /* Discord may be going down too */ }
+    }
+
+    void deleteDiscord(String messageId) {
+        Method delete = method("tokaDiscordLink", "dev.toka.discord.api.DiscordLink", "deleteMessage", String.class);
+        if (delete == null) return;
+        try { delete.invoke(null, messageId); } catch (ReflectiveOperationException | LinkageError failed) { /* Discord is optional */ }
+    }
+
     /** Sends a line to Discord if the link is up; otherwise nothing happens. */
     void discord(String text) {
         Method send = method("tokaDiscordLink", "dev.toka.discord.api.DiscordLink", "sendMessage", String.class);
