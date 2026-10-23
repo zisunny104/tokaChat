@@ -66,7 +66,8 @@ public final class Main extends PluginBase implements Listener {
         Player online = getServer().getOnlinePlayers().get(id);
         String name = online != null ? online.getName() : getServer().getOfflinePlayer(id).getName();
         if (name == null) return;
-        String line = text("discord.inbound", links.nameTag(id, name, online), payload[1]);
+        String said = getConfig().getBoolean("discord.emoji-as-text", true) ? Emoji.plain(payload[1]) : payload[1];
+        String line = text("discord.inbound", links.nameTag(id, name, online), said);
         getServer().broadcastMessage(line);
         relay(true, line);
         links.deleteDiscord(payload[2]);
