@@ -37,6 +37,7 @@ public final class Main extends PluginBase implements Listener {
         relayChat = config.getBoolean("discord.chat", true);
         relayPresence = config.getBoolean("discord.presence", true);
         relayDeaths = config.getBoolean("discord.deaths", true);
+        transfers.clear();
         var section = config.getSection("transfers");
         for (String address : section.getKeys(false)) transfers.put(address, section.getString(address));
         getServer().getPluginManager().registerEvents(this, this);
@@ -73,6 +74,7 @@ public final class Main extends PluginBase implements Listener {
 
     @Override public void onDisable() {
         instance = null;
+        listeningDiscord = false;
         links.stopListeningDiscord(getName());
     }
 
@@ -97,7 +99,7 @@ public final class Main extends PluginBase implements Listener {
             event.setFormat(line);
             relay(relayChat, line);
         } catch (RuntimeException | LinkageError fault) {
-            getLogger().warning("聊天格式化出錯，改用遊戲預設格式：" + fault);
+            getLogger().warning(text("log.chat", fault.getClass().getSimpleName()));
         }
     }
 
@@ -110,7 +112,7 @@ public final class Main extends PluginBase implements Listener {
             event.setJoinMessage(line);
             relay(relayPresence, line);
         } catch (RuntimeException | LinkageError fault) {
-            getLogger().warning("加入訊息出錯：" + fault);
+            getLogger().warning(text("log.join", fault.getClass().getSimpleName()));
         }
     }
 
@@ -126,7 +128,7 @@ public final class Main extends PluginBase implements Listener {
             event.setQuitMessage(line);
             relay(relayPresence, line);
         } catch (RuntimeException | LinkageError fault) {
-            getLogger().warning("離開訊息出錯：" + fault);
+            getLogger().warning(text("log.quit", fault.getClass().getSimpleName()));
         }
     }
 
@@ -146,7 +148,7 @@ public final class Main extends PluginBase implements Listener {
             event.setDeathMessage(line);
             relay(relayDeaths, line);
         } catch (RuntimeException | LinkageError fault) {
-            getLogger().warning("死亡訊息出錯：" + fault);
+            getLogger().warning(text("log.death", fault.getClass().getSimpleName()));
         }
     }
 }

@@ -35,3 +35,8 @@ death:
   suicide: "${0}§c ended it all"
   magic: "${0}§c was killed by magic"
   other: "${0}§c died in a strange way"
+log:
+  chat: "§eChat format failed, using the game default: §a${0}"
+  join: "§eJoin message failed: §a${0}"
+  quit: "§eQuit message failed: §a${0}"
+  death: "§eDeath message failed: §a${0}"
