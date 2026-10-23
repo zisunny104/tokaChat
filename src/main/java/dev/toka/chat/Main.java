@@ -47,12 +47,6 @@ public final class Main extends PluginBase implements Listener {
     private boolean listeningDiscord;
     private static volatile Main instance;
 
-    /** Whether what Discord users write is shown in the game from here. For zero's hand-over check, by reflection. */
-    public static boolean listensDiscord() {
-        Main main = instance;
-        return main != null && main.listeningDiscord;
-    }
-
     /** What a linked Discord user writes in the chat channel is shown in the game, and repeated in the channel in the game's style. */
     private void listenDiscord() {
         if (listeningDiscord || !getConfig().getBoolean("discord.inbound", true)) return;
