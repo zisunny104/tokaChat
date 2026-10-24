@@ -63,9 +63,13 @@ public final class Main extends PluginBase implements Listener {
         if (name == null) return;
         String said = getConfig().getBoolean("discord.emoji-as-text", true) ? Emoji.plain(payload[1]) : payload[1];
         String line = text("discord.inbound", links.nameTag(id, name, online), said);
-        getServer().broadcastMessage(line);
-        relay(true, line);
-        links.deleteDiscord(payload[2]);
+        // The original is deleted even if showing or repeating it fails, so it is not shown twice in Discord
+        try {
+            getServer().broadcastMessage(line);
+            relay(true, line);
+        } finally {
+            links.deleteDiscord(payload[2]);
+        }
     }
 
     @EventHandler public void onPluginEnabled(cn.nukkit.event.plugin.PluginEnableEvent event) {
